@@ -64,15 +64,16 @@ jobs:
       - name: Перевірка наявності схваленого код-рев’ю
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const prNumber = context.payload.pull_request.number;
-            const { data: reviews } = await github.pulls.listReviews({
+            const reviews = await github.rest.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber
             });
 
-            const approved = reviews.some(review => review.state === 'APPROVED');
+            const approved = reviews.data.some(review => review.state === 'APPROVED');
             if (!approved) {
               core.setFailed("❌ Код-рев’ю не схвалено. Потрібне хоча б одне APPROVED рев’ю.");
             } else {
