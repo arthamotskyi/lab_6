@@ -41,12 +41,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 🔹 Підрахунок рядків коду за допомогою Cloc
+      - name: Count lines of code with Cloc
+        run: |
+          sudo apt-get install -y cloc
+          cloc src/ > cloc-report.txt
+          cat cloc-report.txt
+
+      # 🔹 Збереження звіту Cloc як артефакт
+      - name: Upload Cloc report
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloc-report
+          path: cloc-report.txt
+
+      # 🔹 Кешування SonarQube
       - name: Cache SonarQube scanner
         uses: actions/cache@v4
         with:
           path: ~/.sonar/native-sonar-scanner
           key: sonar-scanner-cache
 
+      # 🔹 Запуск аналізу коду через SonarQube
       - name: Run SonarQube analysis
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
@@ -57,6 +73,7 @@ jobs:
             -Dsonar.organization=arthamotskyi
             -Dsonar.sources=src
             -Dsonar.host.url=https://sonarcloud.io
+
   review-check:
     if: github.event_name == 'pull_request' && github.base_ref == 'develop'
     runs-on: ubuntu-latest
