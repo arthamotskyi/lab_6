@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   pull_request:
-    types: [opened, edited, reopened, synchronize, review_requested, submitted]
+    types: [opened, edited, reopened, synchronize]
     branches:
       - develop
 
@@ -41,10 +41,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+      - name: Cache SonarQube scanner
+        uses: actions/cache@v4
         with:
-          projectBaseDir: .
+          path: ~/.sonar/native-sonar-scanner
+          key: sonar-scanner-cache
+
+      - name: Run SonarQube analysis
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_SCANNER_OPTS: '-Dsonar.organization=arthamotskyi -Dsonar.projectKey=arthamotskyi_lab_6'
+        with:
+          args: >
+            -Dsonar.projectKey=arthamotskyi_lab_6
+            -Dsonar.organization=your_org
+            -Dsonar.sources=src
+            -Dsonar.host.url=https://sonarcloud.io
