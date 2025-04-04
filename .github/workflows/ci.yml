@@ -54,6 +54,6 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=arthamotskyi_lab_6
-            -Dsonar.organization=your_org
+            -Dsonar.organization=arthamotskyi
             -Dsonar.sources=src
             -Dsonar.host.url=https://sonarcloud.io
