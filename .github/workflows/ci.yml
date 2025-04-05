@@ -73,17 +73,6 @@ jobs:
           reporter: github-pr-review
           level: error
 
-      - name: Run Prettier via Reviewdog
-        uses: reviewdog/action-cli@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          tool_name: prettier
-          filter_mode: diff_context
-          fail_on_error: false
-          run: |
-            npx prettier --check . | sed -E 's/^(.*): (.*)/::warning file=\1::\2/' || true
-
   review-check:
     if: github.event_name == 'pull_request' && github.base_ref == 'develop'
     runs-on: ubuntu-latest
