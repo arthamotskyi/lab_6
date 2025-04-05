@@ -74,11 +74,14 @@ jobs:
           level: error
 
       - name: Run Prettier via Reviewdog
-        uses: reviewdog/action-prettier@v1
+        uses: reviewdog/action-run@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
+          tool_name: prettier
           level: info
+          run: |
+            npx prettier --check . | sed 's/^/::warning file=/' || true
 
   review-check:
     if: github.event_name == 'pull_request' && github.base_ref == 'develop'
